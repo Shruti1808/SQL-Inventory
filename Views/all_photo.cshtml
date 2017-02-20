@@ -1,0 +1,6 @@
+@foreach(var photo in @Model)
+{
+  <h1>@photo.GetCaption()</h1>
+  <h3>@photo.GetPlaceTaken()</h3>
+}
+<a href="/">Back to Main</a>

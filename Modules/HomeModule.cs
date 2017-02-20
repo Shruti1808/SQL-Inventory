@@ -18,8 +18,16 @@ namespace InventoryModule
         Dictionary<string, string> Model = new Dictionary<string, string>(){};
         Model.Add("placeTaken", locationInput);
         Model.Add("caption", captionInput);
-        Console.WriteLine(Model["placeTaken"]);
         return View["new_photo.cshtml", Model];
+
+      };
+      Get["/all_photo"]= _=>{
+        List<Collection> output = Collection.GetAll();
+        return View["all_photo.cshtml", output];
+      };
+      Get["/cleared"]= _ => {
+        Collection.DeleteAll();
+        return View["cleared.cshtml"];
       };
     }
   }
