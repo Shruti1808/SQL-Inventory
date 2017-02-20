@@ -129,5 +129,47 @@ namespace Inventory
         conn.Close();
       }
     }
+    public static Collection Find(int photoId)
+    {
+      SqlConnection conn = DB.Connection();
+      conn.Open();
+
+      SqlCommand cmd = new SqlCommand("SELECT * FROM photos WHERE id = @id;", conn);
+      SqlParameter photoIdParameter = new SqlParameter();
+      photoIdParameter.ParameterName = "@id";
+      photoIdParameter.Value = photoId.ToString();
+      cmd.Parameters.Add(photoIdParameter);
+      SqlDataReader rdr = cmd.ExecuteReader();
+
+      int foundCollectionId = 0;
+      string foundPhototaken = null;
+      string foundCaption = null;
+
+
+      while(rdr.Read())
+      {
+        foundCollectionId = rdr.GetInt32(0);
+        foundPhototaken = rdr.GetString(1);
+        foundCaption = rdr.GetString(2);
+      }
+
+      Collection foundCollection = new Collection(foundPhototaken,foundCaption,foundCollectionId);
+
+      if (rdr != null)
+      {
+        rdr.Close();
+      }
+      if (conn != null)
+      {
+        conn.Close();
+      }
+
+      return foundCollection;
+
+
+
+
+
+    }
   }
 }

@@ -32,7 +32,7 @@ namespace Inventory
 
       Assert.Equal(firstCollection,secondCollection);
     }
-
+    //Save
     [Fact]
     public void Test_Save_SavesToDatabase()
     {
@@ -41,9 +41,32 @@ namespace Inventory
       testCollection.Save();
       List<Collection> result = Collection.GetAll();
       List<Collection> testList = new List<Collection>{testCollection};
-      Console.WriteLine(result[0].GetPlaceTaken());
-      Console.WriteLine(testList[0].GetPlaceTaken());
       Assert.Equal(testList, result);
+    }
+
+ //Check if correct Id is assigned to the object
+    [Fact]
+    public void Test_Save_AssignsIdToObject()
+    {
+      Collection testCollection = new Collection("Epicodus", "C# Class Students");
+
+      testCollection.Save();
+      Collection savedCollection = Collection.GetAll()[0];
+
+      int result = savedCollection.GetId();
+      int testId = testCollection.GetId();
+
+      Assert.Equal(testId, result);
+    }
+     //Find
+    [Fact]
+    public void Test_Find_FindcollectionInDatabase()
+    {
+      Collection testCollection = new Collection("Epicodus", "C# Class Students");
+      testCollection.Save();
+      Collection foundCollection = Collection.Find(testCollection.GetId());
+      Assert.Equal(testCollection,foundCollection);
+
     }
   }
 }
