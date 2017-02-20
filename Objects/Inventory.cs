@@ -17,6 +17,22 @@ namespace Inventory
       _caption = Caption;
     }
 
+    public override bool Equals(System.Object otherCollection)
+    {
+      if (!(otherCollection is Collection))
+      {
+        return false;
+      }
+      else
+      {
+        Collection newCollection = (Collection) otherCollection;
+        bool idEquality = (this.GetId() == newCollection.GetId());
+        bool placeTakenEquality = (this.GetPlaceTaken() == newCollection.GetPlaceTaken());
+        bool captionEquality =(this.GetCaption() == newCollection.GetCaption());
+        return (idEquality && placeTakenEquality && captionEquality);
+      }
+    }
+
     public int GetId()
     {
       return _id;
@@ -73,6 +89,7 @@ namespace Inventory
 
       return allCollections;
     }
+
     public static void DeleteAll()
     {
       SqlConnection conn = DB.Connection();
@@ -80,7 +97,37 @@ namespace Inventory
       SqlCommand cmd = new SqlCommand("DELETE FROM photos;", conn);
       cmd.ExecuteNonQuery();
       conn.Close();
+    }
 
+    public void Save()
+    {
+      SqlConnection conn = DB.Connection();
+      conn.Open();
+
+      SqlCommand cmd = new SqlCommand("INSERT INTO photos (place_taken, caption) OUTPUT INSERTED.id VALUES (@place_taken, @caption);", conn);
+
+      SqlParameter placeTakenParameter = new SqlParameter();
+      placeTakenParameter.ParameterName = "@place_taken";
+      placeTakenParameter.Value = this.GetPlaceTaken();
+      SqlParameter captionParameter = new SqlParameter();
+      captionParameter.ParameterName = "@caption";
+      captionParameter.Value = this.GetCaption();
+      cmd.Parameters.Add(placeTakenParameter);
+      cmd.Parameters.Add(captionParameter);
+      SqlDataReader rdr = cmd.ExecuteReader();
+
+      while(rdr.Read())
+      {
+        this._id = rdr.GetInt32(0);
+      }
+      if (rdr != null)
+      {
+        rdr.Close();
+      }
+      if (conn != null)
+      {
+        conn.Close();
+      }
     }
   }
 }
